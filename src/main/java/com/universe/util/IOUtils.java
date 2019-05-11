@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author liuyalou
  * @since 2019年5月6日
@@ -16,6 +19,8 @@ import java.io.ObjectOutputStream;
  * @Description:
  */
 public class IOUtils {
+
+  private static final Logger logger = LoggerFactory.getLogger(IOUtils.class);
 
   /**
    * 将文件读入内存中
@@ -53,7 +58,7 @@ public class IOUtils {
       bos.write(content.getBytes());
       bos.flush();
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error(e.getMessage(), e);
     }
   }
 
@@ -87,7 +92,7 @@ public class IOUtils {
       oos.writeObject(obj);
       oos.flush();
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error(e.getMessage(), e);
     }
   }
 

@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.universe.biz.FCBiz;
 import com.universe.biz.NewsBiz;
@@ -44,6 +46,8 @@ import com.universe.util.IOUtils;
 import com.universe.util.UiUtils;
 
 public class MainWindow {
+
+  private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
   private NewsBiz biz = new NewsBizImpl();
   protected Shell shell;
@@ -197,7 +201,7 @@ public class MainWindow {
       Image image = new Image(shell.getDisplay(), is);
       comp_top.setBackgroundImage(image);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error("读取图片响应流失败：{}", e.getMessage(), e);
     }
   }
 
@@ -255,7 +259,7 @@ public class MainWindow {
     try {
       fc = (FontAndColor) IOUtils.readObject(new File(fcPath));
     } catch (Exception e) {
-
+      logger.info("获取字体颜色信息失败，采用系统默认字体和颜色");
     }
     if (fc != null) {
       for (TableItem ti : table.getItems()) {
