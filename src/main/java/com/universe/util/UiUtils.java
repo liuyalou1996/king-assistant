@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class UiUtil {
+public class UiUtils {
 	/**
 	 * 显示窗口为全屏的帮助方法
 	 */

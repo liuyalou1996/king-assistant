@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.universe.biz.FCBiz;
 import com.universe.entity.FontAndColor;
-import com.universe.util.IOUtil;
+import com.universe.util.IOUtils;
 
 public class FCBizImpl implements FCBiz {
 
@@ -34,7 +34,7 @@ public class FCBizImpl implements FCBiz {
   public FontDialog selectDialog(Shell shell, String path) {
     FontDialog dialog = null;
     try {
-      FontAndColor fc = (FontAndColor) IOUtil.readObject(new File(path));
+      FontAndColor fc = (FontAndColor) IOUtils.readObject(new File(path));
       dialog = showInitedDialog(shell, fc);
     } catch (Exception e) {}
     // 如果能读到保存的对象，初始化颜色字体对话框，否则，弹出对话框

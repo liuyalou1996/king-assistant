@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class DialogUtil {
+public class DialogUtils {
 
   /**
    * 显示对话框

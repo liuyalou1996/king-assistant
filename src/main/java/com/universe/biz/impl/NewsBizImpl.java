@@ -15,13 +15,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.universe.biz.NewsBiz;
-import com.universe.biz.NewsInfo;
 import com.universe.entity.News;
+import com.universe.loader.SysConfigLoader;
 
 public class NewsBizImpl implements NewsBiz {
 
   private int count = 0;
 
+  @Override
   public List<List<News>> getTableItemContent() throws IOException {
     List<List<News>> list = new ArrayList<List<News>>();
     Map<String, List<News>> map = extractNewsItemsFromPage();
@@ -53,13 +54,13 @@ public class NewsBizImpl implements NewsBiz {
   @Override
   // 从页面提取新闻款项,以新闻类型为键，新闻对象的列表集合作值
   public Map<String, List<News>> extractNewsItemsFromPage() throws IOException {
-    Document doc = Jsoup.connect(NewsInfo.HOST).timeout(3 * 1000).get();
+    Document doc = Jsoup.connect(SysConfigLoader.getProperty("addr.host")).timeout(3 * 1000).get();
     Map<String, List<News>> map = new LinkedHashMap<String, List<News>>();
-    Elements all = doc.select("#newsList1");
-    Elements news = doc.select("#newsList2");
-    Elements bullet = doc.select("#newsList3");
-    Elements activities = doc.select("#newsList4");
-    Elements competiton = doc.select("#newsList5");
+    Elements all = doc.select(SysConfigLoader.getProperty("selector.allInfoId"));
+    Elements news = doc.select(SysConfigLoader.getProperty("selector.newsId"));
+    Elements bullet = doc.select(SysConfigLoader.getProperty("selector.bulletId"));
+    Elements activities = doc.select(SysConfigLoader.getProperty("selector.activitiesId"));
+    Elements competiton = doc.select(SysConfigLoader.getProperty("selector.competitionId"));
 
     extractItemsOfEachType(map, all);
     extractItemsOfEachType(map, news);
@@ -76,10 +77,10 @@ public class NewsBizImpl implements NewsBiz {
     List<News> newsList = new ArrayList<News>();
     for (Element li : lis) {
       // 获得新闻的相关信息
-      String newsType = li.select(NewsInfo.NEWSTYPE_CLASS).first().html();
-      String newsText = li.select(NewsInfo.NEWSTXT_CLASS).first().html();
-      String newsTime = li.select(NewsInfo.NEWSTIME_CLASS).first().html();
-      String newsUri = li.select(NewsInfo.NEWSTXT_CLASS).first().attr("href");
+      String newsType = li.select(SysConfigLoader.getProperty("selector.newsTypeClass")).first().html();
+      String newsText = li.select(SysConfigLoader.getProperty("selector.newsTextClass")).first().html();
+      String newsTime = li.select(SysConfigLoader.getProperty("selector.newsTimeClass")).first().html();
+      String newsUri = li.select(SysConfigLoader.getProperty("selector.newsTextClass")).first().attr("href");
 
       // 存入对象中
       News news = new News();
@@ -87,7 +88,7 @@ public class NewsBizImpl implements NewsBiz {
       news.setNewsText(newsText);
       news.setNewsTime(newsTime);
       // 与主机地址拼接
-      news.setNewsUri(NewsInfo.HOST + newsUri);
+      news.setNewsUri(SysConfigLoader.getProperty("addr.host") + newsUri);
       newsList.add(news);
     }
     // 新闻类型作键
@@ -98,16 +99,17 @@ public class NewsBizImpl implements NewsBiz {
     } else if (count == 5) {
       key = "赛事";
     } else {
-      key = lis.first().select(NewsInfo.NEWSTYPE_CLASS).first().html();
+      key = lis.first().select(SysConfigLoader.getProperty("selector.newsTypeClass")).first().html();
     }
     map.put(key, newsList);
+
   }
 
   @Override
   // 获得背景图片
   public InputStream getBackgroudImageStream() throws IOException {
-    Document doc = Jsoup.connect(NewsInfo.HOST).get();
-    Element ele = doc.select(NewsInfo.BG_ClASS).first();
+    Document doc = Jsoup.connect(SysConfigLoader.getProperty("addr.host")).get();
+    Element ele = doc.select(SysConfigLoader.getProperty("selector.backgroundImageClass")).first();
     String attr = ele.attr("style");
     String bgUrl = "http:" + attr.substring(attr.indexOf("(") + 1, attr.indexOf(")"));
 

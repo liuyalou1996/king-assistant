@@ -1,52 +1,47 @@
 package com.universe.ui;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FontDialog;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.swt.layout.FillLayout;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.TableCursor;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.universe.biz.FCBiz;
 import com.universe.biz.NewsBiz;
-import com.universe.biz.NewsInfo;
 import com.universe.biz.impl.FCBizImpl;
 import com.universe.biz.impl.NewsBizImpl;
 import com.universe.entity.FontAndColor;
-import com.universe.entity.MyProperties;
 import com.universe.entity.News;
+import com.universe.loader.SysConfigLoader;
 import com.universe.swt.SWTResourceManager;
-import com.universe.util.DialogUtil;
-import com.universe.util.IOUtil;
-import com.universe.util.LogUtil;
-import com.universe.util.UiUtil;
-
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.custom.TableCursor;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import com.universe.util.DialogUtils;
+import com.universe.util.IOUtils;
+import com.universe.util.UiUtils;
 
 public class MainWindow {
 
@@ -66,13 +61,8 @@ public class MainWindow {
   private MenuItem mi_default;
 
   private MenuItem mi_exit;
-  private String path = IOUtil.getClassPath("settings" + File.separator + "fc.txt");
+  private String fcPath = IOUtils.getClassPath("settings" + File.separator + "fc.txt");
 
-  /**
-   * Launch the application.
-   * 
-   * @param args
-   */
   public static void main(String[] args) {
     try {
       MainWindow window = new MainWindow();
@@ -82,9 +72,6 @@ public class MainWindow {
     }
   }
 
-  /**
-   * Open the window.
-   */
   public void open() {
     Display display = Display.getDefault();
     createContents();
@@ -97,9 +84,6 @@ public class MainWindow {
     }
   }
 
-  /**
-   * Create contents of the window.
-   */
   protected void createContents() {
     shell = new Shell();
     shell.setImage(SWTResourceManager.getImage(MainWindow.class, "/images/logo.png"));
@@ -107,7 +91,7 @@ public class MainWindow {
     shell.setText("王者荣耀小助手");
     shell.setLayout(new FillLayout(SWT.HORIZONTAL));
     // 窗口全屏
-    UiUtil.showFullScreen(shell);
+    UiUtils.showFullScreen(shell);
     SashForm sashForm = new SashForm(shell, SWT.VERTICAL);
 
     comp_top = new Composite(sashForm, SWT.NONE);
@@ -213,7 +197,7 @@ public class MainWindow {
       Image image = new Image(shell.getDisplay(), is);
       comp_top.setBackgroundImage(image);
     } catch (IOException e) {
-      LogUtil.error(e);
+      e.printStackTrace();
     }
   }
 
@@ -245,7 +229,7 @@ public class MainWindow {
 
             @Override
             public void run() {
-              DialogUtil.showErrorDialog(shell, "错误", "网络连接有问题，请检查网络连接!");
+              DialogUtils.showErrorDialog(shell, "错误", "网络连接有问题，请检查网络连接!");
             }
           });
         }
@@ -269,7 +253,7 @@ public class MainWindow {
   private void setFontAndColorForTable() {
     FontAndColor fc = null;
     try {
-      fc = (FontAndColor) IOUtil.readObject(new File(path));
+      fc = (FontAndColor) IOUtils.readObject(new File(fcPath));
     } catch (Exception e) {
 
     }
@@ -288,6 +272,7 @@ public class MainWindow {
     // 改变表格行高
     table.addListener(SWT.MeasureItem, new Listener() {
 
+      @Override
       public void handleEvent(Event event) {
         event.height = 25;
       }
@@ -318,7 +303,7 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.PAGE_ADDR, mi_page.getText());
+        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty("addr.exposion"), mi_page.getText());
         container.open();
       }
     });
@@ -326,7 +311,8 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.HERO_ADDR, mi_hero.getText());
+        BrowserWindow container =
+            new BrowserWindow(SysConfigLoader.getProperty("addr.exposion.hero"), mi_hero.getText());
         container.open();
       }
     });
@@ -334,7 +320,8 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.SKIN_ADDR, mi_skin.getText());
+        BrowserWindow container =
+            new BrowserWindow(SysConfigLoader.getProperty("addr.exposion.skin"), mi_skin.getText());
         container.open();
       }
     });
@@ -342,7 +329,8 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.REDESIGN_ADDR, mi_redesign.getText());
+        BrowserWindow container =
+            new BrowserWindow(SysConfigLoader.getProperty("addr.exposion.redesign"), mi_redesign.getText());
         container.open();
       }
     });
@@ -350,7 +338,8 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.SYSTEMOP_ADDR, mi_systemOp.getText());
+        BrowserWindow container =
+            new BrowserWindow(SysConfigLoader.getProperty("addr.exposion.optimization.system"), mi_systemOp.getText());
         container.open();
       }
     });
@@ -358,7 +347,8 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(NewsInfo.DRAWOP_ADDR, mi_systemOp.getText());
+        BrowserWindow container =
+            new BrowserWindow(SysConfigLoader.getProperty("addr.exposion.optimization.art"), mi_systemOp.getText());
         container.open();
       }
     });
@@ -380,7 +370,7 @@ public class MainWindow {
               @Override
               public void run() {
                 FCBiz biz = new FCBizImpl();
-                FontDialog dialog = biz.selectDialog(shell, path);
+                FontDialog dialog = biz.selectDialog(shell, fcPath);
                 FontData fontData = dialog.open();
                 if (fontData != null) {
                   Font font = new Font(shell.getDisplay(), fontData);
@@ -401,7 +391,7 @@ public class MainWindow {
                   fc.setFontName(fontData.getName());
                   fc.setFontHeight(fontData.getHeight());
                   fc.setFontStyle(fontData.getStyle());
-                  IOUtil.writeObject(path, fc);
+                  IOUtils.writeObject(fcPath, fc);
                 }
               }
             });
@@ -414,11 +404,10 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        MyProperties properties = MyProperties.getInstance();
-        String tableBackground = properties.getProperty("tableBackground");
-        String cursorBackground = properties.getProperty("cursorBackground");
-        String tableItemBackground = properties.getProperty("tableItemBackground");
-        String tableItemForeground = properties.getProperty("tableItemForeground");
+        String tableBackground = SysConfigLoader.getProperty("background.table");
+        String cursorBackground = SysConfigLoader.getProperty("background.cursor");
+        String tableItemBackground = SysConfigLoader.getProperty("background.tableItem");
+        String tableItemForeground = SysConfigLoader.getProperty("foreground.tableItem");
 
         Display display = shell.getDisplay();
         FontData systemFd = display.getSystemFont().getFontData()[0];
@@ -439,7 +428,7 @@ public class MainWindow {
           ti.setForeground(display.getSystemColor(Integer.parseInt(tableItemForeground)));
           ti.setFont(font);
         }
-        IOUtil.write(path, "");
+        IOUtils.write(fcPath, "");
       }
     });
     // 退出系统

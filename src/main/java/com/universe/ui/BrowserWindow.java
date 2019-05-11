@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.universe.swt.SWTResourceManager;
-import com.universe.util.UiUtil;
+import com.universe.util.UiUtils;
 
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.SWT;
@@ -80,7 +80,7 @@ public class BrowserWindow {
     shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 
     // 设置全屏
-    UiUtil.showFullScreen(shell);
+    UiUtils.showFullScreen(shell);
 
     browser = new Browser(shell, SWT.NONE);
     browser.setUrl(newsUrl);
