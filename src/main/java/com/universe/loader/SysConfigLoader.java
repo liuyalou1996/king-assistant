@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class SysConfigLoader {
   /**
    * 系统配置
    */
-  private static final Map<String, String> SYS_CONFIG_MAP = new HashMap<>();
+  private static final Map<String, String> SYS_CONFIG_MAP = new LinkedHashMap<>();
 
   static {
     // 类加载时加载系统配置
