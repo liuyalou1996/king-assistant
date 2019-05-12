@@ -6,9 +6,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +27,8 @@ import org.slf4j.LoggerFactory;
 public class IOUtils {
 
   private static final Logger logger = LoggerFactory.getLogger(IOUtils.class);
+
+  public static final String DEDAULT_SEPERATOR = File.separator;
 
   /**
    * 将文件读入内存中
@@ -60,6 +68,24 @@ public class IOUtils {
     } catch (IOException e) {
       logger.error(e.getMessage(), e);
     }
+  }
+
+  /**
+   * 加载属性文件
+   * @param path
+   * @return
+   * @throws Exception
+   */
+  public static Properties loadProperties(String path) throws Exception {
+    Properties props = new Properties();
+    try (InputStream is = new FileInputStream(path);
+        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+      props.load(reader);
+    } catch (Exception e) {
+      throw e;
+    }
+
+    return props;
   }
 
   /**
@@ -120,37 +146,41 @@ public class IOUtils {
   }
 
   /**
-   * 
-   * @param file
-   *            文件名
-   * @return 用户目录下的文件路径
-   */
-  public static String getUserPath(String file) {
-    String path = System.getProperty("user.home");
-    String filePath = null;
-    if (file == null) {
-      filePath = path + File.separator;
-    } else {
-      filePath = path + File.separator + file;
-    }
-    return filePath;
-  }
-
-  /**
-   * 项目路径
-   * 
+   * 用户目录下的文件路径
+   * @param dir
    * @param fileName
    * @return
    */
-  public static String getClassPath(String fileName) {
-    String path = System.getProperty("user.dir");
-    String filePath = null;
-    if (fileName == null) {
-      filePath = path + File.separator;
-    } else {
-      filePath = path + File.separator + fileName;
+  public static String getUserPath(String dir, String fileName) {
+    String basePath = System.getProperty("user.home");
+    if (StringUtils.isBlank(dir)) {
+      return basePath + DEDAULT_SEPERATOR;
     }
-    return filePath;
+
+    if (StringUtils.isBlank(fileName)) {
+      return basePath + DEDAULT_SEPERATOR + dir + DEDAULT_SEPERATOR;
+    }
+
+    return basePath + DEDAULT_SEPERATOR + dir + DEDAULT_SEPERATOR + fileName;
+  }
+
+  /**
+   * 项目路径下的文件路径
+   * @param dir
+   * @param fileName
+   * @return
+   */
+  public static String getClassPath(String dir, String fileName) {
+    String basePath = System.getProperty("user.dir");
+    if (StringUtils.isBlank(dir)) {
+      return basePath + DEDAULT_SEPERATOR;
+    }
+
+    if (StringUtils.isBlank(fileName)) {
+      return basePath + DEDAULT_SEPERATOR + dir + DEDAULT_SEPERATOR;
+    }
+
+    return basePath + DEDAULT_SEPERATOR + dir + DEDAULT_SEPERATOR + fileName;
   }
 
 }

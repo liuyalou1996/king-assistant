@@ -65,7 +65,7 @@ public class MainWindow {
   private MenuItem mi_default;
 
   private MenuItem mi_exit;
-  private String fcPath = IOUtils.getClassPath("settings" + File.separator + "fc.txt");
+  private String fcPath = IOUtils.getClassPath("settings", "fc.txt");
 
   public static void main(String[] args) {
     try {

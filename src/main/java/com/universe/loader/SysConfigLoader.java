@@ -1,30 +1,34 @@
 package com.universe.loader;
 
-import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.universe.util.IOUtils;
+
 public class SysConfigLoader {
 
   private static final Logger logger = LoggerFactory.getLogger(SysConfigLoader.class);
   /**
+   * 系统配置文件路径
+   */
+  private static final String CONFIG_PATH = IOUtils.getClassPath("settings", "config.properties");
+  /**
    * 占位符解析模式
    */
   private static final Pattern PATTERN = Pattern.compile("(\\$\\{((?:\\w|\\.)*)\\})");
-
   /**
    * 系统配置
    */
@@ -48,20 +52,20 @@ public class SysConfigLoader {
   }
 
   private static void loadSysConfig() {
-    // ResourceBundle有缓存，重新读取配置前要先清除缓存
-    ResourceBundle.clearCache();
-    ResourceBundle bundle = ResourceBundle.getBundle("config");
-    Enumeration<String> keys = bundle.getKeys();
-    String key = null;
-    while (keys.hasMoreElements()) {
-      key = keys.nextElement();
-      SYS_CONFIG_MAP.put(key, bundle.getString(key));
-    }
+    try {
+      Properties props = IOUtils.loadProperties(CONFIG_PATH);
+      Set<String> keys = props.stringPropertyNames();
+      keys.forEach(key -> {
+        SYS_CONFIG_MAP.put(key, props.getProperty(key));
+      });
 
-    SYS_CONFIG_MAP.forEach((propName, propValue) -> {
-      // 解析其中的占位符
-      parsePlaceholder(propName, propValue);
-    });
+      SYS_CONFIG_MAP.forEach((propName, propValue) -> {
+        // 解析其中的占位符
+        parsePlaceholder(propName, propValue);
+      });
+    } catch (Exception e) {
+      logger.error("加载系统配置失败:==> {}", e.getMessage(), e);
+    }
 
   }
 
@@ -83,18 +87,20 @@ public class SysConfigLoader {
 
   private static void registerWithWatchService() throws Exception {
     WatchService watcher = FileSystems.getDefault().newWatchService();
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    URI uri = loader.getResource("").toURI();
-    Path path = Paths.get(uri);
+    Path path = Paths.get(IOUtils.getClassPath("settings", null));
+    logger.info("被监控的文件路径为: {}", path);
 
     // 在WatchService上注册
     path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
     while (true) {
       WatchKey key = watcher.take();
       key.pollEvents().forEach(event -> {
-        logger.info("系统配置文件{}变动，开始重新加载配置文件...", event.context());
-        loadSysConfig();
-        logger.info("加载完毕，最新配置信息为: {}", SYS_CONFIG_MAP);
+        String fileName = String.valueOf(event.context());
+        if ("config.properties".equals(fileName)) {
+          logger.info("系统配置文件config.properties变动，开始重新加载配置文件...");
+          loadSysConfig();
+          logger.info("加载完毕，最新配置信息为: {}", SYS_CONFIG_MAP);
+        }
       });
 
       // 使WatchKey能重新入队列，等待事件通知
