@@ -43,7 +43,7 @@ public class SysConfigLoader {
       try {
         registerWithWatchService();
       } catch (Exception e) {
-        logger.error("注册文件监听器失败:==> {}", e.getMessage(), e);
+        logger.error("注册文件监听器失败.", e);
       }
     }).start();
   }
@@ -65,7 +65,7 @@ public class SysConfigLoader {
         parsePlaceholder(propName, propValue);
       });
     } catch (Exception e) {
-      logger.error("加载系统配置失败:==> {}", e.getMessage(), e);
+      logger.error("加载系统配置失败.", e);
     }
 
   }
