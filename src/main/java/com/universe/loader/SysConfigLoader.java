@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.universe.util.IOUtils;
+import com.universe.util.JsonUtils;
 
 public class SysConfigLoader {
 
@@ -99,7 +100,7 @@ public class SysConfigLoader {
         if ("config.properties".equals(fileName)) {
           logger.info("系统配置文件config.properties变动，开始重新加载配置文件...");
           loadSysConfig();
-          logger.info("加载完毕，最新配置信息为: {}", SYS_CONFIG_MAP);
+          logger.info("加载完毕，最新配置信息为: {}", JsonUtils.toPrettyJsonString(SYS_CONFIG_MAP));
         }
       });
 
