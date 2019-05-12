@@ -259,7 +259,7 @@ public class MainWindow {
     try {
       fc = (FontAndColor) IOUtils.readObject(new File(fcPath));
     } catch (Exception e) {
-      logger.info("获取字体颜色信息失败，采用系统默认字体和颜色");
+      logger.info("获取字体颜色信息失败，采用系统默认字体和颜色!");
     }
     if (fc != null) {
       for (TableItem ti : table.getItems()) {

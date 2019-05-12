@@ -23,7 +23,7 @@ public class SysConfigLoader {
   /**
    * 占位符解析模式
    */
-  private static final Pattern PATTERN = Pattern.compile(".*(\\$\\{(.+)\\}).*");
+  private static final Pattern PATTERN = Pattern.compile("(\\$\\{((?:\\w|\\.)*)\\})");
 
   /**
    * 系统配置
@@ -72,7 +72,6 @@ public class SysConfigLoader {
       // 分组中的内容为引用的变量
       String refKey = matcher.group(2);
       String replaced = propValue.replace(target, SYS_CONFIG_MAP.get(refKey));
-
       // 如果还有占位符，递归再次替换
       if (replaced.contains("$")) {
         parsePlaceholder(propName, replaced);
@@ -83,10 +82,6 @@ public class SysConfigLoader {
   }
 
   private static void registerWithWatchService() throws Exception {
-    Runnable task = () -> {
-
-    };
-    new Thread(task).start();
     WatchService watcher = FileSystems.getDefault().newWatchService();
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
     URI uri = loader.getResource("").toURI();
