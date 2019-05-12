@@ -39,13 +39,17 @@ public class SysConfigLoader {
     // 类加载时加载系统配置
     loadSysConfig();
     // 这里开启一个线程注册文件监听器，否则会一直等待
-    new Thread(() -> {
+    Thread thread = new Thread(() -> {
       try {
         registerWithWatchService();
       } catch (Exception e) {
         logger.error("注册文件监听器失败.", e);
       }
-    }).start();
+    });
+
+    // 注意设置为精灵线程，否则程序关闭后该线程将一直阻塞
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static String getProperty(String key) {
