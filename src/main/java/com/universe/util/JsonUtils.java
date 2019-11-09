@@ -1,135 +1,116 @@
 package com.universe.util;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+/**
+ * json字符串与java bean转换工具类
+ * @author: liuyalou
+ * @date: 2019年10月29日
+ */
 public class JsonUtils {
 
-    private static List<SerializerFeature> featureList = new ArrayList<>();
+  public static String toJsonString(Object obj, SerializeFilter... filters) {
+    return toJsonString(obj, null, false, false, filters);
+  }
 
-    static {
-        featureList.add(SerializerFeature.WriteDateUseDateFormat);
+  public static String toJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
+    return toJsonString(obj, null, true, false, filters);
+  }
+
+  public static String toPrettyJsonString(Object obj, SerializeFilter... filters) {
+    return toJsonString(obj, null, false, true, filters);
+  }
+
+  public static String toPrettyJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
+    return toJsonString(obj, null, true, true, filters);
+  }
+
+  public static String toJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, false, false, filters);
+  }
+
+  public static String toJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, true, false, filters);
+  }
+
+  public static String toPrettyJsonStringWithDateFormat(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, false, true, filters);
+  }
+
+  public static String toPrettyJsonStringWithDateFormatAndNullValue(Object obj, String dateFormat, SerializeFilter... filters) {
+    return toJsonString(obj, dateFormat, true, true, filters);
+  }
+
+  public static String toJsonString(Object obj, String dateFormat, boolean writeNullValue, boolean prettyFormat,
+      SerializeFilter... filters) {
+    if (obj == null) {
+      return null;
     }
 
-    public static String toJsonString(Object obj, SerializeFilter... filters) {
-        return toJsonString(obj, false, false, filters);
+    int defaultFeature = JSON.DEFAULT_GENERATE_FEATURE;
+    if (writeNullValue) {
+      return prettyFormat
+          ? JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature, SerializerFeature.WriteMapNullValue,
+              SerializerFeature.PrettyFormat)
+          : JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature,
+              SerializerFeature.WriteMapNullValue);
     }
 
-    public static String toJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
-        return toJsonString(obj, true, false, filters);
+    return prettyFormat
+        ? JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature, SerializerFeature.PrettyFormat)
+        : JSON.toJSONString(obj, SerializeConfig.globalInstance, filters, dateFormat, defaultFeature);
+
+  }
+
+  public static <T> T toJavaBean(String jsonStr, Class<T> clazz) {
+    if (StringUtils.isBlank(jsonStr)) {
+      return null;
     }
 
-    public static String toPrettyJsonString(Object obj, SerializeFilter... filters) {
-        return toJsonString(obj, false, true, filters);
+    return JSON.parseObject(jsonStr, clazz);
+  }
+
+  public static <T> List<T> toList(String jsonStr, Class<T> clazz) {
+    if (StringUtils.isBlank(jsonStr)) {
+      return null;
     }
 
-    public static String toPrettyJsonStringWithNullValue(Object obj, SerializeFilter... filters) {
-        return toJsonString(obj, true, true, filters);
+    return JSON.parseArray(jsonStr, clazz);
+  }
+
+  public static Map<String, Object> toMap(String jsonStr) {
+    if (StringUtils.isBlank(jsonStr)) {
+      return null;
     }
 
-    private static String toJsonString(Object obj, boolean isNullValueAllowed, boolean prettyFormat,
-                                       SerializeFilter... filters) {
-        if (obj == null) {
-            return null;
-        }
+    return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {});
+  }
 
-        if (isNullValueAllowed) {
-            if (prettyFormat) {
-                return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat,
-                        SerializerFeature.WriteDateUseDateFormat);
-            }
-            return JSON.toJSONString(obj, filters, SerializerFeature.WriteMapNullValue,
-                    SerializerFeature.WriteDateUseDateFormat);
-        } else {
-            if (prettyFormat) {
-                return JSON.toJSONString(obj, filters, SerializerFeature.PrettyFormat,
-                        SerializerFeature.WriteDateUseDateFormat);
-            }
-            return JSON.toJSONString(obj, filters, SerializerFeature.WriteDateUseDateFormat);
-        }
+  public static Map<String, Object> javaBeanToMap(Object obj) {
+    if (Objects.isNull(obj)) {
+      return null;
     }
 
-    /**
-     * 将json字符串转换为javaBean
-     *
-     * @param jsonStr json字符串
-     * @param clazz   运行时对象
-     * @return
-     */
-    public static <T> T toJavaBean(String jsonStr, Class<T> clazz) {
-        if (StringUtils.isBlank(jsonStr)) {
-            return null;
-        }
+    return toMap(toJsonString(obj));
+  }
 
-        return JSON.parseObject(jsonStr, clazz);
+  public static <T> T mapToJavaBean(Map<String, ? extends Object> map, Class<T> clazz) {
+    if (CollectionUtils.isEmpty(map)) {
+      return null;
     }
 
-    /**
-     * 字符串转换为list
-     *
-     * @param jsonStr json字符串
-     * @param clazz   运行时对象
-     * @return
-     */
-    public static <T> List<T> toList(String jsonStr, Class<T> clazz) {
-        if (StringUtils.isBlank(jsonStr)) {
-            return null;
-        }
-
-        return JSON.parseArray(jsonStr, clazz);
-    }
-
-    /**
-     * 将json字符串转换为map
-     *
-     * @param jsonStr json字符串
-     * @return
-     */
-    public static Map<String, Object> toMap(String jsonStr) {
-        if (StringUtils.isBlank(jsonStr)) {
-            return null;
-        }
-
-        return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {
-        });
-    }
-
-    /**
-     * 将javaBean转换为map
-     *
-     * @param obj 转换的对象
-     * @return
-     */
-    public static Map<String, Object> javaBeanToMap(Object obj) {
-        if (obj == null) {
-            return null;
-        }
-
-        return toMap(toJsonString(obj));
-    }
-
-    /**
-     * 将map转换为javaBean
-     *
-     * @param map   map实例
-     * @param clazz 运行时对象
-     * @return
-     */
-    public static <T> T mapToJavaBean(Map<String, ? extends Object> map, Class<T> clazz) {
-        if (CollectionUtils.isEmpty(map)) {
-            return null;
-        }
-
-        String jsonStr = JSON.toJSONString(map);
-        return JSON.parseObject(jsonStr, clazz);
-    }
+    String jsonStr = JSON.toJSONString(map);
+    return JSON.parseObject(jsonStr, clazz);
+  }
 
 }

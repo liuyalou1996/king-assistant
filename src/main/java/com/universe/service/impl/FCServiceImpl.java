@@ -1,4 +1,4 @@
-package com.universe.biz.impl;
+package com.universe.service.impl;
 
 import java.io.File;
 
@@ -8,11 +8,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import com.universe.biz.FCBiz;
-import com.universe.entity.FontAndColor;
+import com.universe.common.pojo.FontAndColor;
+import com.universe.service.FCService;
 import com.universe.util.IOUtils;
 
-public class FCBizImpl implements FCBiz {
+public class FCServiceImpl implements FCService {
 
     @SuppressWarnings("deprecation")
     @Override

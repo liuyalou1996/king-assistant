@@ -1,14 +1,14 @@
-package com.universe.biz;
+package com.universe.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.universe.entity.News;
+import com.universe.common.pojo.News;
 
 
-public interface NewsBiz {
+public interface NewsService {
     // 从页面提取新闻款项,以新闻类型为键，新闻对象的列表集合作值
     public Map<String, List<News>> extractNewsItemsFromPage() throws IOException;
 

@@ -1,4 +1,4 @@
-package com.universe.entity;
+package com.universe.common.pojo;
 
 import java.io.Serializable;
 
