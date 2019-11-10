@@ -71,7 +71,7 @@ public class MainWindow {
   private MenuItem mi_default;
   private MenuItem mi_exit;
 
-  private String fcPath = IOUtils.getClassPath("settings", "fc.txt");
+  private String fcPath = IOUtils.getClassPath("settings", "fc.ini");
 
   public static void main(String[] args) {
     try {
@@ -134,11 +134,9 @@ public class MainWindow {
     new Thread(() -> {
       Display.getDefault().asyncExec(() -> {
         setContentForTable();
+        setFontAndColorForTable();
       });
     }).start();
-
-    // 设置字体和颜色
-    setFontAndColorForTable();
   }
 
   private void initTable(SashForm sashForm) {
@@ -283,13 +281,17 @@ public class MainWindow {
     } catch (Exception e) {
       logger.info("获取字体颜色信息失败，采用系统默认字体和颜色!");
     }
+
     if (fc != null) {
+      logger.info("成功获取字体颜色配置信息，开始初始化表格字体和颜色!");
+      Font font = new Font(shell.getDisplay(), fc.getFontName(), fc.getFontHeight(), fc.getFontStyle());
+      Color color = new Color(shell.getDisplay(), fc.getRed(), fc.getGreen(), fc.getBlue());
       for (TableItem ti : table.getItems()) {
-        Font font = new Font(shell.getDisplay(), fc.getFontName(), fc.getFontHeight(), fc.getFontStyle());
-        Color color = new Color(shell.getDisplay(), fc.getRed(), fc.getGreen(), fc.getBlue());
         ti.setFont(font);
         ti.setForeground(color);
       }
+      font.dispose();
+      color.dispose();
     }
   }
 
@@ -420,6 +422,10 @@ public class MainWindow {
                     ti.setFont(font);
                     ti.setForeground(color);
                   }
+                  // 用完释放系统资源
+                  font.dispose();
+                  color.dispose();
+
                   // 将配置对象写入文件
                   FontAndColor fc = new FontAndColor();
                   fc.setRed(red);

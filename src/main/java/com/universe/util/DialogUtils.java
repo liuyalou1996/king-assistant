@@ -19,117 +19,121 @@ import org.eclipse.swt.widgets.Text;
 
 public class DialogUtils {
 
-	/**
-	 * 显示对话框
-	 * @param shell
-	 * @param title
-	 * @param content
-	 */
-	public static void showErrorDialog(Shell shell, String title, String message) {
-		MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-		setDialog(title, message, mb);
-	}
+  /**
+   * 显示对话框
+   * @param shell
+   * @param title
+   * @param content
+   */
+  public static void showErrorDialog(Shell shell, String title, String message) {
+    MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+    setDialog(title, message, mb);
+  }
 
-	public static void showInformationDialog(Shell shell, String title, String message) {
-		MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-		setDialog(title, message, mb);
-	}
+  public static void showInformationDialog(Shell shell, String title, String message) {
+    MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+    setDialog(title, message, mb);
+  }
 
-	public static int showQuestionDialog(Shell shell, String title, String message) {
-		MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_QUESTION);
-		int result = setDialog(title, message, mb);
-		return result;
-	}
+  public static int showQuestionDialog(Shell shell, String title, String message) {
+    MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_QUESTION);
+    int result = setDialog(title, message, mb);
+    return result;
+  }
 
-	private static int setDialog(String title, String message, MessageBox mb) {
-		mb.setText(title);
-		mb.setMessage(message);
-		int result = mb.open();
-		return result;
-	}
+  private static int setDialog(String title, String message, MessageBox mb) {
+    mb.setText(title);
+    mb.setMessage(message);
+    int result = mb.open();
+    return result;
+  }
 
-	/**
-	 * 设置字体对话框
-	 *
-	 * @param shell 窗体
-	 * @param text  文本
-	 */
-	public static void showFontDialog(Shell shell, StyledText text) {
-		FontDialog fd = new FontDialog(shell, SWT.NONE);
-		FontData fontData = fd.open();
-		if (fontData != null) {
-			Font font = new Font(shell.getDisplay(), fontData);
-			text.setFont(font);
-			Color color = new Color(shell.getDisplay(), fd.getRGB().red, fd.getRGB().green, fd.getRGB().blue);
-			text.setForeground(color);
-		}
-	}
+  /**
+   * 设置字体对话框
+   *
+   * @param shell 窗体
+   * @param text  文本
+   */
+  public static void showFontDialog(Shell shell, StyledText text) {
+    FontDialog fd = new FontDialog(shell, SWT.NONE);
+    FontData fontData = fd.open();
+    if (fontData != null) {
+      Font font = new Font(shell.getDisplay(), fontData);
+      text.setFont(font);
+      Color color = new Color(shell.getDisplay(), fd.getRGB().red, fd.getRGB().green, fd.getRGB().blue);
+      text.setForeground(color);
 
-	/**
-	 * 设置颜色对话框
-	 *
-	 * @param shell 窗体
-	 * @param text  文本框
-	 */
-	public static void showColorDialog(Shell shell, Text text) {
-		ColorDialog cd = new ColorDialog(shell, SWT.NONE);
-		RGB rgb = cd.open();
-		if (rgb != null) {
-			Color color = new Color(shell.getDisplay(), rgb);
-			text.setForeground(color);
-		}
-	}
+      // 设置完后关闭资源
+      font.dispose();
+      color.dispose();
+    }
+  }
 
-	/**
-	 * 打印对话框
-	 *
-	 * @param shell 窗体
-	 */
-	public static void showPrintDialog(Shell shell) {
-		PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
-		PrinterData pd = dialog.open();
-		if (pd != null) {
-			Printer printer = new Printer(pd);
-			printer.dispose();
-		}
-	}
+  /**
+   * 设置颜色对话框
+   *
+   * @param shell 窗体
+   * @param text  文本框
+   */
+  public static void showColorDialog(Shell shell, Text text) {
+    ColorDialog cd = new ColorDialog(shell, SWT.NONE);
+    RGB rgb = cd.open();
+    if (rgb != null) {
+      Color color = new Color(shell.getDisplay(), rgb);
+      text.setForeground(color);
+    }
+  }
 
-	/**
-	 * 文件选择或保存对话框
-	 *
-	 * @param shell 窗体
-	 * @return
-	 */
-	public static String showFileDialog(Shell shell, int style, String[] extensions, String[] names) {
-		FileDialog fd = new FileDialog(shell, style);
-		String path = System.getProperty("user.home");
-		// 设置打开时文件的默认路径
-		fd.setFilterPath(path);
-		// 设置所打开文件的扩展名
-		fd.setFilterExtensions(extensions);
-		// 设置显示到下拉框中的扩展名的名称
-		fd.setFilterNames(names);
-		// 文件的抽象目录
-		String file = fd.open();
-		return file;
-	}
+  /**
+   * 打印对话框
+   *
+   * @param shell 窗体
+   */
+  public static void showPrintDialog(Shell shell) {
+    PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
+    PrinterData pd = dialog.open();
+    if (pd != null) {
+      Printer printer = new Printer(pd);
+      printer.dispose();
+    }
+  }
 
-	/**
-	 * 保存文件，目录选择对话框
-	 *
-	 * @param shell 窗体
-	 * @return
-	 */
-	public static String showDirectoryDialog(Shell shell) {
-		DirectoryDialog dd = new DirectoryDialog(shell, SWT.NONE);
-		// 设置显示在窗口上方的提示信息
-		dd.setMessage("请选择要保存的文件夹");
-		// 设置对话框的标题
-		dd.setText("请选择文件目录");
-		// 设置打开时默认的文件目录
-		dd.setFilterPath(System.getProperty("user.home"));
-		// 打开窗口，返回用户选择的文件目录
-		String fileDir = dd.open();
-		return fileDir;
-	}
+  /**
+   * 文件选择或保存对话框
+   *
+   * @param shell 窗体
+   * @return
+   */
+  public static String showFileDialog(Shell shell, int style, String[] extensions, String[] names) {
+    FileDialog fd = new FileDialog(shell, style);
+    String path = System.getProperty("user.home");
+    // 设置打开时文件的默认路径
+    fd.setFilterPath(path);
+    // 设置所打开文件的扩展名
+    fd.setFilterExtensions(extensions);
+    // 设置显示到下拉框中的扩展名的名称
+    fd.setFilterNames(names);
+    // 文件的抽象目录
+    String file = fd.open();
+    return file;
+  }
+
+  /**
+   * 保存文件，目录选择对话框
+   *
+   * @param shell 窗体
+   * @return
+   */
+  public static String showDirectoryDialog(Shell shell) {
+    DirectoryDialog dd = new DirectoryDialog(shell, SWT.NONE);
+    // 设置显示在窗口上方的提示信息
+    dd.setMessage("请选择要保存的文件夹");
+    // 设置对话框的标题
+    dd.setText("请选择文件目录");
+    // 设置打开时默认的文件目录
+    dd.setFilterPath(System.getProperty("user.home"));
+    // 打开窗口，返回用户选择的文件目录
+    String fileDir = dd.open();
+    return fileDir;
+  }
 }
