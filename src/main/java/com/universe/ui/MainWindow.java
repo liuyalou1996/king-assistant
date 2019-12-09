@@ -127,8 +127,13 @@ public class MainWindow {
     addSelectionListenerForMenuItemOfSettins();
     // 给表格加相关事件
     addListenerForTable();
-    // 设置背景图片
-    setBackgroundImage();
+
+    // 网络请求，异步刷新
+    new Thread(() -> {
+      Display.getDefault().asyncExec(() -> {
+        setBackgroundImage();
+      });
+    }).start();
 
     // 为表格设置内容，由于网络请求耗时比较长，故采用异步刷新
     new Thread(() -> {
@@ -257,6 +262,7 @@ public class MainWindow {
         }
       }
     } catch (IOException e) {
+      logger.error("表格内容设置失败：{}", e.getMessage(), e);
       DialogUtils.showErrorDialog(shell, "错误", "网络连接有问题，请检查网络连接!");
     }
   }
