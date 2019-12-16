@@ -3,7 +3,7 @@ package com.universe.service;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import com.universe.common.pojo.FontAndColor;
+import com.universe.pojo.FontAndColor;
 
 public interface FCService {
 

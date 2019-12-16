@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.universe.common.pojo.News;
+import com.universe.pojo.News;
 
 
 public interface NewsService {

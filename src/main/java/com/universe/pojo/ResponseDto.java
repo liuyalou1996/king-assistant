@@ -1,4 +1,4 @@
-package com.universe.common.pojo;
+package com.universe.pojo;
 
 import java.util.List;
 import java.util.Map;

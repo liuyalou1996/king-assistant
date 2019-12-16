@@ -1,4 +1,4 @@
-package com.universe.common.pojo;
+package com.universe.pojo;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

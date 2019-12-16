@@ -36,9 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import com.universe.common.constant.AddressConst;
 import com.universe.common.constant.SystemConfigConst;
-import com.universe.common.pojo.FontAndColor;
-import com.universe.common.pojo.News;
 import com.universe.loader.SysConfigLoader;
+import com.universe.pojo.FontAndColor;
+import com.universe.pojo.News;
 import com.universe.service.FCService;
 import com.universe.service.NewsService;
 import com.universe.service.impl.FCServiceImpl;

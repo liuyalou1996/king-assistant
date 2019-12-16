@@ -8,7 +8,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import com.universe.common.pojo.FontAndColor;
+import com.universe.pojo.FontAndColor;
 import com.universe.service.FCService;
 import com.universe.util.IOUtils;
 
