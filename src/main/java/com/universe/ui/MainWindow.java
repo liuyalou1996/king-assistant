@@ -365,11 +365,19 @@ public class MainWindow {
         container.open();
       }
     });
+    mi_adjust.addSelectionListener(new SelectionAdapter() {
+
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.HERO_REBUILD), mi_adjust.getText());
+        container.open();
+      }
+    });
     mi_newsys.addSelectionListener(new SelectionAdapter() {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.NEW_SYS), mi_rebuild.getText());
+        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.NEW_SYS), mi_newsys.getText());
         container.open();
       }
     });
@@ -377,7 +385,7 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.NEW_MODE), mi_rebuild.getText());
+        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.NEW_MODE), mi_newmode.getText());
         container.open();
       }
     });
@@ -393,7 +401,7 @@ public class MainWindow {
 
       @Override
       public void widgetSelected(SelectionEvent e) {
-        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.OPTIMIZATION_ART), mi_systemOp.getText());
+        BrowserWindow container = new BrowserWindow(SysConfigLoader.getProperty(AddressConst.OPTIMIZATION_ART), mi_drawOp.getText());
         container.open();
       }
     });
